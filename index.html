@@ -43,7 +43,10 @@
     </header>
     <main id="inicio" class="cabecalho">
       <div>
-        <img src="" class="foto-perfil" />
+        <img
+          src="img/WhatsApp Image 2026-06-22 at 11.00.35.jpeg"
+          class="foto-perfil"
+        />
         <h1>João Vitor Costa</h1>
         <p class="cabecalho-sub-titulo">
           Desenvolvedor Full Stack e Programador de Sistemas
@@ -251,17 +254,6 @@
         <button type="submit" class="button">Enviar Mensagem</button>
       </form>
     </section>
-    <div class="creditos-caixa">
-      <div class="creditos">
-        <video autoplay muted loop class="video-creditos">
-          <source src="img/14369240-hd_1920_1080_30fps.mp4" type="video/mp4" />
-        </video>
-        <p class="creditos-texto">tanana</p>
-      </div>
-      <div id="garantia">
-        <p>© 2026 Portfólio. Todos os direitos reservados.</p>
-      </div>
-    </div>
     <script>
       VanillaTilt.init(document.querySelectorAll(".projetos-card"), {
         max: 25,
@@ -342,6 +334,13 @@
         function build(respiroPx = 0) {
           if (horizontalTL) horizontalTL.kill();
 
+          // MUDANÇA: Se a tela for mobile (<= 1024px), limpa os estilos antigos do GSAP e encerra a função.
+          // Isso desativa o ScrollTrigger horizontal e deixa o overflow-x nativo do CSS agir.
+          if (window.innerWidth <= 1024) {
+            gsap.set([cards, ".projetos-card"], { clearProps: "all" });
+            return;
+          }
+
           const cardItems = gsap.utils.toArray(
             cards.querySelectorAll(".projetos-card"),
           );
@@ -357,7 +356,6 @@
           );
           const exitDistance = visibleWidth * 0.85;
 
-          // MUDANÇA: Entrada ultra rápida (5%). Sobra mais tempo para o meio (75%).
           const enterPct = 0.05;
           const mainPct = 0.75;
           const exitPct = 0.2;
@@ -380,7 +378,7 @@
             cards,
             {
               x: 0,
-              ease: "power3.out", // Suaviza a parada rápida
+              ease: "power3.out",
               duration: enterPct,
             },
             0,
@@ -409,15 +407,11 @@
             enterPct,
           );
 
-          // Revelação de todos os cartões comprimida logo no início do movimento horizontal
+          // Revelação de todos os cartões comprimida logo no início
           cardItems.forEach((card, i) => {
             if (i === 0) return;
 
             const progress = i / Math.max(cardItems.length - 1, 1);
-
-            // MUDANÇA: Multiplicador reduzido drasticamente para 0.25.
-            // Todos os cartões vão aparecer nos primeiros 25% do movimento total,
-            // ficando visíveis por muito mais tempo no "meio" do scroll.
             const startTime = enterPct + progress * mainPct * 0.25;
 
             horizontalTL.to(
@@ -477,21 +471,6 @@
             ScrollTrigger.refresh();
           }, 200);
         });
-      });
-    </script>
-    <script>
-      ScrollTrigger.create({
-        trigger: ".contatos",
-        start: "top 80%",
-        end: "bottom bottom",
-
-        onEnter: () => document.querySelector(".menu")?.classList.add("final"),
-        onLeave: () =>
-          document.querySelector(".menu")?.classList.remove("final"),
-        onEnterBack: () =>
-          document.querySelector(".menu")?.classList.add("final"),
-        onLeaveBack: () =>
-          document.querySelector(".menu")?.classList.remove("final"),
       });
     </script>
   </body>
