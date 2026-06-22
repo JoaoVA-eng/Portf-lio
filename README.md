@@ -1,2 +1,2 @@
-# Portfolio
-meu portfólio basico(em desenvolvimento)
+# Portfólio
+meu portfólio básico(em desenvolvimento)
