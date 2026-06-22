@@ -235,40 +235,82 @@ h1 {
 
 .projetos-card {
   position: relative;
-  width: 300px;
-  height: 200px;
+  /* Aumentado para 650px para acomodar imagem e texto lado a lado confortavelmente */
+  width: 650px;
+  height: 320px;
   margin: 30px;
   box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.5);
   border-radius: 15px;
-  background: rgba(255, 255, 255, 0.1);
-  /*overflow: hidden;*/
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-top: 1px solid rgba(255, 255, 255, 0.5);
-  border-left: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
   flex-shrink: 0;
+
+  /* Ativa o Flexbox na horizontal e esconde rebarbas da imagem */
+  display: flex;
+  align-items: center;
+  overflow: hidden;
 }
 
-.projetos-titulo {
-  margin-top: 50px;
-  text-align: center;
-  font-size: 2.5rem;
-  margin-bottom: 30px;
+/* Link estrutural em volta da imagem */
+.projetos-card > a {
+  display: block;
+  width: 45%; /* Ocupa 45% da largura total do card */
+  height: 100%;
+  flex-shrink: 0;
+  cursor: pointer;
 }
 
 .projetos-imagem {
-  height: 200px;
+  height: 100%;
   width: 100%;
   object-fit: cover;
+  display: block;
+  transition: all 0.3s ease;
 }
 
+/* Efeito de hover suave na imagem clicável */
+.projetos-imagem:hover {
+  opacity: 0.85;
+  transform: scale(1.03);
+}
+
+/* Bloco do lado direito focado nos textos descritivos */
+.caixa-textos-projetos {
+  width: 55%; /* Ocupa os 55% restantes do card */
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-sizing: border-box;
+}
+
+/* Título interno do card */
 .info-projetos {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: var(--claro);
   margin-bottom: 5px;
 }
 
+/* Estilização para quando você aplicar o link no texto do título também */
+.info-projetos a {
+  text-decoration: none;
+  color: var(--claro);
+  transition: color 0.3s ease;
+}
+
+.info-projetos a:hover {
+  color: var(--primaria);
+}
+
+/* Parágrafo descritivo formatado para leitura técnica */
 .paragrafo-projetos {
-  color: rgba(226, 232, 240, 0.8);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: rgba(226, 232, 240, 0.85);
+  text-align: left;
 }
 
 .caixa-textos-projetos {
