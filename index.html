@@ -299,11 +299,7 @@
             !lenis &&
             typeof Lenis !== "undefined"
           ) {
-            lenis = new Lenis({
-              lerp: 0.06,
-              smooth: true,
-            });
-
+            lenis = new Lenis({ lerp: 0.06, smooth: true });
             lenis.on("scroll", ScrollTrigger.update);
 
             ScrollTrigger.scrollerProxy(document.body, {
@@ -326,9 +322,7 @@
             gsap.ticker.add((time) => {
               lenis.raf(time * 1000);
             });
-
             gsap.ticker.lagSmoothing(0);
-
             ScrollTrigger.addEventListener("refresh", () => lenis.resize());
           }
         }
@@ -338,19 +332,21 @@
         const containerCards = document.querySelector(".projetos-scrolling");
         const cards = document.querySelector(".projetos-caixa");
 
-        if (!containerCards || !cards) return;
-
-        let horizontalTL;
-
         function build(respiroPx = 0) {
-          if (horizontalTL) horizontalTL.kill();
+          // 1. Limpeza agressiva
+          ScrollTrigger.getAll().forEach((st) => st.kill());
+          gsap.set(
+            [".projetos-scrolling", ".projetos-caixa", ".projetos-card"],
+            { clearProps: "all" },
+          );
 
-          // MUDANÇA: Se a tela for mobile (<= 1024px), limpa os estilos antigos do GSAP e encerra a função.
-          // Isso desativa o ScrollTrigger horizontal e deixa o overflow-x nativo do CSS agir.
+          // 2. Se for mobile, para aqui e não faz mais nada
           if (window.innerWidth <= 1024) {
-            gsap.set([cards, ".projetos-card"], { clearProps: "all" });
             return;
           }
+
+          // 3. Só roda se for Desktop
+          if (!containerCards || !cards) return;
 
           const cardItems = gsap.utils.toArray(
             cards.querySelectorAll(".projetos-card"),
@@ -366,13 +362,9 @@
             totalWidth - visibleWidth + respiroPx,
           );
           const exitDistance = visibleWidth * 0.85;
-
-          const enterPct = 0.05;
-          const mainPct = 0.75;
-          const exitPct = 0.2;
           const endLen = visibleWidth + scrollDistance + exitDistance;
 
-          horizontalTL = gsap.timeline({
+          let horizontalTL = gsap.timeline({
             scrollTrigger: {
               trigger: containerCards,
               start: "top top",
@@ -384,47 +376,25 @@
             },
           });
 
-          // FASE 1 — Entrada rápida da pista
           horizontalTL.to(
             cards,
-            {
-              x: 0,
-              ease: "power3.out",
-              duration: enterPct,
-            },
+            { x: 0, ease: "power3.out", duration: 0.05 },
             0,
           );
-
           horizontalTL.to(
             cardItems[0],
-            {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              ease: "power3.out",
-              duration: enterPct,
-            },
+            { opacity: 1, y: 0, scale: 1, ease: "power3.out", duration: 0.05 },
             0,
           );
-
-          // FASE 2 — Scroll horizontal
           horizontalTL.to(
             cards,
-            {
-              x: -scrollDistance,
-              ease: "none",
-              duration: mainPct,
-            },
-            enterPct,
+            { x: -scrollDistance, ease: "none", duration: 0.75 },
+            0.05,
           );
 
-          // Revelação de todos os cartões comprimida logo no início
           cardItems.forEach((card, i) => {
             if (i === 0) return;
-
             const progress = i / Math.max(cardItems.length - 1, 1);
-            const startTime = enterPct + progress * mainPct * 0.25;
-
             horizontalTL.to(
               card,
               {
@@ -434,23 +404,20 @@
                 ease: "power2.out",
                 duration: 0.05,
               },
-              startTime,
+              0.05 + progress * 0.75 * 0.25,
             );
           });
 
-          // FASE 3 — Saída rápida no final
-          const exitStart = enterPct + mainPct;
           horizontalTL.to(
             cards,
             {
               x: -scrollDistance - exitDistance,
               y: 70,
               ease: "power2.in",
-              duration: exitPct,
+              duration: 0.2,
             },
-            exitStart,
+            0.8,
           );
-
           horizontalTL.to(
             cardItems,
             {
@@ -458,26 +425,24 @@
               x: -80,
               scale: 0.85,
               ease: "power2.in",
-              duration: exitPct * 0.85,
+              duration: 0.17,
             },
-            exitStart,
+            0.8,
           );
         }
 
         function getRespiro() {
-          if (window.innerWidth >= 1025) return 80;
-          if (window.innerWidth >= 768) return 20;
-          return 0;
+          return window.innerWidth >= 1025 ? 80 : 20;
         }
 
         build(getRespiro());
-        ScrollTrigger.refresh();
 
         let resizeTimer;
         window.addEventListener("resize", () => {
           clearTimeout(resizeTimer);
           resizeTimer = setTimeout(() => {
-            initLenisIfDesktop();
+            // Se for desktop, reinicia o lenis, se não, apenas limpa o GSAP via build
+            if (window.innerWidth > 1024) initLenisIfDesktop();
             build(getRespiro());
             ScrollTrigger.refresh();
           }, 200);

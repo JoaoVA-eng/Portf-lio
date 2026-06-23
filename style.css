@@ -344,22 +344,34 @@ h1 {
    ========================================================================== */
 @media (max-width: 1024px) {
   .projetos {
-    overflow: visible;
-    min-height: auto !important; /* Remove a altura mínima de tela cheia */
-    height: auto !important; /* Força a altura a se adaptar ao tamanho do card */
-  }
-  .projetos-scrolling {
+    overflow: visible; /* Garante que nada corte o título */
     min-height: auto !important;
     height: auto !important;
-    overflow-x: auto;
-    padding-top: 20px; /* Diminui o espaço interno no topo (era 60px) */
-    padding-bottom: 0px; /* Remove folgas na parte de baixo */
+    display: flex;
+    flex-direction: column;
   }
+
+  .projetos-scrolling {
+    overflow-x: auto !important; /* Força o scroll horizontal */
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .projetos-caixa {
-    width: max-content !important;
-    transform: none !important;
-    padding: 1rem 1rem; /* Diminui o respiro interno da caixa de cards */
-    gap: 1.5rem;
+    display: flex !important;
+    flex-direction: row !important;
+    width: max-content !important; /* Isso é crucial para o flexbox entender o tamanho */
+    transform: none !important; /* Remove qualquer vestígio do GSAP */
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Criamos um container interno apenas para o scroll dos cards */
+  .container-scroll-cards {
+    overflow-x: auto;
+    width: 100%;
+    padding-bottom: 20px; /* Espaço para a barra de scroll não cortar os cards */
+    -webkit-overflow-scrolling: touch; /* Suavidade no iOS */
   }
 }
 
@@ -510,4 +522,33 @@ h1 {
 }
 .mobile-menu.active .line3 {
   transform: rotate(45deg) translate(-5px, -7px);
+}
+
+@media (max-width: 1024px) {
+  /* Reseta a altura de todas as seções para o tamanho real do conteúdo */
+  .cabecalho,
+  .sobre-seçao,
+  .projetos,
+  .contatos {
+    height: auto !important;
+    min-height: auto !important;
+    padding-top: 50px !important;
+    padding-bottom: 50px !important;
+  }
+
+  /* Garante que o container de projetos não reserve espaço para o pin */
+  .projetos-scrolling {
+    height: auto !important;
+    min-height: auto !important;
+    overflow-x: auto !important;
+    padding: 0 !important;
+  }
+
+  /* Garante que a caixa de cards não tenha transformações do GSAP */
+  .projetos-caixa {
+    transform: none !important;
+    display: flex !important;
+    flex-direction: row !important;
+    width: auto !important;
+  }
 }
